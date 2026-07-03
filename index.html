@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Night Planner 🌹</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fff0f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        .card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+        .hidden { display: none !important; }
+        .graphic-wrapper {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 4.5rem;
+            user-select: none;
+        }
+        h1, h2 { color: #c2185b; margin-bottom: 20px; }
+        h1 { font-size: 1.5rem; min-height: 50px; }
+        p.subtitle { color: #666; font-size: 0.95rem; margin-top: -15px; margin-bottom: 20px; font-style: italic; }
+        
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #f48fb1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        input[type="date"]:focus { border-color: #c2185b; }
+
+        .btn-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 25px;
+            width: 100%;
+            height: 140px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .primary-btn { background-color: #e91e63; color: white; position: relative; }
+        .no-btn { background-color: #757575; color: white; position: relative; z-index: 999; }
+        .whatsapp-btn { background-color: #25d366; color: white; text-decoration: none; display: inline-block; margin-top: 20px; padding: 12px 28px; border-radius: 50px; font-weight: bold; }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .time-slot {
+            background: #f8fafc;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .time-slot.selected { background: #e91e63; color: white; border-color: #e91e63; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .choice-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .choice-card:hover { border-color: #f48fb1; background: #fff0f2; }
+        .choice-card.selected { border-color: #c2185b; background: #c2185b; color: white; }
+        .icon { font-size: 2rem; display: block; margin-bottom: 5px; }
+
+        .summary-box {
+            background: #fff0f2;
+            border: 2px dashed #e91e63;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .summary-line { margin-bottom: 10px; font-size: 1.1rem; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <!-- STAGE 1: Invitation -->
+    <div id="stage1" class="card">
+        <div id="graphicStage1" class="graphic-wrapper">🌸</div>
+        <h1 id="questionStage1">Will you go on a date with your husband, Ainon? 🌹</h1>
+        <div id="btnContainer1" class="btn-container">
+            <button class="primary-btn" onclick="nextStage(1, 2)">YES! 💖</button>
+            <button id="noBtn" class="no-btn" onclick="handleNoClick()" onmouseover="handleNoHover()" ontouchstart="handleNoTouch(event)">No 🕵️‍♂️</button>
+        </div>
+    </div>
+
+    <!-- STAGE 2: Date & Time -->
+    <div id="stage2" class="card" style="display: none;">
+        <div class="graphic-wrapper">📅</div>
+        <h1>So... when are you free?</h1>
+        <p>Pick a date:</p>
+        <input type="date" id="dateInput">
+        
+        <p>Pick a time slot:</p>
+        <div class="time-slots">
+            <div class="time-slot" onclick="selectTime(this, '12:00 PM')">🕛 12:00 PM</div>
+            <div class="time-slot" onclick="selectTime(this, '3:00 PM')">🕒 3:00 PM</div>
+            <div class="time-slot" onclick="selectTime(this, '6:30 PM')">🕡 6:30 PM</div>
+            <div class="time-slot" onclick="selectTime(this, '7:30 PM')">🕢 7:30 PM</div>
+            <div class="time-slot" onclick="selectTime(this, '8:30 PM')">🕣 8:30 PM</div>
+            <div class="time-slot" onclick="selectTime(this, '9:00 PM')">🕘 9:00 PM</div>
+        </div>
+        
+        <button class="primary-btn" style="width: 100%; margin-top: 10px;" onclick="validateStage2()">Next Step ✨</button>
+    </div>
+
+    <!-- STAGE 3: Multi-Select Food & Drink Matrix -->
+    <div id="stage3" class="card" style="display: none;">
+        <div class="graphic-wrapper">🍛</div>
+        <h1>What are we eating?</h1>
+        <p class="subtitle">(You can choose multiple items! 😋👇)</p>
+        <div class="grid-container">
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Kacchi Biryani')"><span class="icon">👑</span>Kacchi Biryani</div>
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Bhuna Khichuri')"><span class="icon">🍳</span>Bhuna Khichuri</div>
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Grilled Chicken & Naan')"><span class="icon">🫓</span>Chicken & Naan</div>
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Fuchka / Chotpoti')"><span class="icon">🌶️</span>Fuchka / Chotpoti</div>
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Borhani')"><span class="icon">🥛</span>Borhani</div>
+            <div class="choice-card" onclick="toggleFoodSelection(this, 'Falooda')"><span class="icon">🍨</span>Falooda</div>
+        </div>
+        <button class="primary-btn" style="width: 100%; margin-top: 15px;" onclick="buildFinalSummary()">Book Date 🎟️</button>
+    </div>
+
+    <!-- STAGE 4: Summary -->
+    <div id="stage4" class="card" style="display: none;">
+        <div class="graphic-wrapper">🥰</div>
+        <h2>YAY!! Date Confirmed! 🥂✨</h2>
+        <p>Can't wait to go out with you, Ainon pookie! Here is our plan:</p>
+        
+        <div class="summary-box">
+            <div class="summary-line">📅 <strong>Date:</strong> <span id="finalDate"></span></div>
+            <div class="summary-line">⏰ <strong>Time:</strong> <span id="finalTime"></span></div>
+            <div class="summary-line">🍽️ <strong>Menu Items:</strong> <span id="finalFood"></span></div>
+        </div>
+        
+        <button class="whatsapp-btn" onclick="sendToWhatsApp()">Send Plan to Husband 💬</button>
+    </div>
+
+    <script>
+        let noCount = 0;
+        let selectedDate = "";
+        let selectedTimeSlot = "";
+        let selectedFoods = []; // Array holding multiple selections
+        let lastClickTime = 0;
+
+        const REJECTION_SEQUENCES = [
+            { text: "Wait, did you misclick? 🤔", emoji: "🤨" },
+            { text: "Are you sure you aren't free?? 🥺", emoji: "😭" },
+            { text: "Please, look at how cute I am asking! 🐱", emoji: "🥺" },
+            { text: "No option is disabled on this device! ❌", emoji: "🚫" },
+            { text: "You have to say YES to your husband! ❤️", emoji: "🔒" },
+            { text: "Catch me if you can! 🏃‍♂️💨", emoji: "⚡" }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').min = today;
+        });
+
+        function nextStage(current, next) {
+            document.getElementById(`stage${current}`).style.display = 'none';
+            document.getElementById(`stage${next}`).style.display = 'block';
+        }
+
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedTimeSlot = time;
+        }
+
+        function validateStage2() {
+            selectedDate = document.getElementById('dateInput').value;
+            if (!selectedDate || !selectedTimeSlot) {
+                alert("Please select both a date and a time slot! 📅🕒");
+                return;
+            }
+            nextStage(2, 3);
+        }
+
+        function toggleFoodSelection(element, foodName) {
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedFoods = selectedFoods.filter(item => item !== foodName);
+            } else {
+                element.classList.add('selected');
+                selectedFoods.push(foodName);
+            }
+        }
+
+        function buildFinalSummary() {
+            if (selectedFoods.length === 0) {
+                alert("Please select at least one food or drink item! 🍛🥛");
+                return;
+            }
+            document.getElementById('finalDate').innerText = selectedDate;
+            document.getElementById('finalTime').innerText = selectedTimeSlot;
+            document.getElementById('finalFood').innerText = selectedFoods.join(', ');
+            nextStage(3, 4);
+        }
+
+        function sendToWhatsApp() {
+            const foodList = selectedFoods.join(', ');
+            const message = `Hey husband! ❤️ I filled out the date request! We are going out on ${selectedDate} at ${selectedTimeSlot}. Our custom menu: ${foodList}! See you! ✨🥂`;
+            window.open(`https://wa.me/8801572116513?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // --- DODGING NO BUTTON MATRIX ---
+        function handleNoClick() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastClickTime < 300) return; 
+            lastClickTime = currentTime;
+
+            const stage1Heading = document.getElementById('questionStage1');
+            const graphic = document.getElementById('graphicStage1');
+            
+            if (noCount < REJECTION_SEQUENCES.length) {
+                stage1Heading.innerText = REJECTION_SEQUENCES[noCount].text;
+                graphic.innerText = REJECTION_SEQUENCES[noCount].emoji;
+                noCount++;
+            } else {
+                const loopIndex = noCount % REJECTION_SEQUENCES.length;
+                stage1Heading.innerText = REJECTION_SEQUENCES[loopIndex].text;
+                graphic.innerText = REJECTION_SEQUENCES[loopIndex].emoji;
+                noCount++;
+            }
+            
+            if (noCount > 3) {
+                moveNoButton();
+            }
+        }
+
+        function handleNoHover() {
+            if (noCount > 3) moveNoButton();
+        }
+
+        function handleNoTouch(e) {
+            if (noCount > 3) {
+                e.preventDefault();
+                handleNoClick();
+            } else {
+                handleNoClick();
+            }
+        }
+
+        function moveNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.querySelector('#stage1 .primary-btn');
+            const container = document.getElementById('btnContainer1');
+            
+            if (noBtn.style.position !== 'absolute') {
+                noBtn.style.position = 'absolute';
+            }
+            
+            const maxX = container.clientWidth - noBtn.offsetWidth;
+            const maxY = container.clientHeight - noBtn.offsetHeight;
+            
+            const yesLeft = yesBtn.offsetLeft;
+            const yesTop = yesBtn.offsetTop;
+            const yesWidth = yesBtn.offsetWidth;
+            const yesHeight = yesBtn.offsetHeight;
+            
+            let randomX, randomY;
+            let overlapping = true;
+            let safety = 0;
+
+            while (overlapping && safety < 100) {
+                randomX = Math.floor(Math.random() * maxX);
+                randomY = Math.floor(Math.random() * maxY);
+                
+                const buffer = 15;
+                const hitX = (randomX + noBtn.offsetWidth >= yesLeft - buffer) && (randomX <= yesLeft + yesWidth + buffer);
+                const hitY = (randomY + noBtn.offsetHeight >= yesTop - buffer) && (randomY <= yesTop + yesHeight + buffer);
+                
+                if (!(hitX && hitY)) overlapping = false;
+                safety++;
+            }
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+    </script>
+</body>
+  </html>
+  
